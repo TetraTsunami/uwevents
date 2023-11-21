@@ -1,6 +1,6 @@
 import moment from "moment";
 export const CategoryHeader = ({ children, sticky}: {children: any, sticky: boolean}) => (
-    <h3 className="bg-gradient-to-t from-transparent to-black py-2 text-xl font-semibold"
+    <h3 className="bg-gradient-to-t from-transparent to-neutral-950 py-2 text-xl font-semibold"
       style={sticky ? {position: "sticky", top: "0"} : {}} >
       {children}
     </h3>

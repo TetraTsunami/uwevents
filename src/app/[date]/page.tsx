@@ -13,7 +13,7 @@ export default async function SpecificDate({ params }: { params: { date: string 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div  className="mb-32 grid text-center w-full max-w-2xl rounded-lg border 
-      px-5 py-4 transition-colors border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-800/30 group"
+      px-5 py-4 transition-colors border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-950 group"
       >
         <h2 className={`mb-3 text-2xl font-semibold`}>
           Events listing{" "}
