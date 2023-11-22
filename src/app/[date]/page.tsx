@@ -8,7 +8,8 @@ export default async function SpecificDate({ params }: { params: { date: string 
   if (!dateRegex.test(params.date)) {
     return Response.redirect("/404");
   }
-  const eventsGrouped = await getEventsGrouped(params.date, true);
+  const date = new Date(params.date.replace("-", "/"));
+  const eventsGrouped = await getEventsGrouped(date.toISOString().slice(0, 10), true);
   
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -22,7 +23,7 @@ export default async function SpecificDate({ params }: { params: { date: string 
           </span>
         </h2>
         <hr />
-        <DateHeader date={new Date(params.date.replace("-", "/"))} />
+        <DateHeader date={date} />
         {eventsGrouped.map((group, index) => (
           <div key={index}>
             <CategoryHeader sticky={false}>{group.type}</CategoryHeader>

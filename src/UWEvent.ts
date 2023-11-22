@@ -32,7 +32,7 @@ export class ScheduledEvent {
         this.time = time;
         this.location = location;
         // hueristic to determine the type of event
-        if (time.allDay) {
+        if (time.dropIn) {
             this.type = EventCategory.AllDay;
         } else if (matchesAny([title, subtitle], [/Let's Talk/i, /Table/i])) {
             this.type = EventCategory.LetsTalk;
@@ -62,11 +62,15 @@ export class EventDuration {
     start;
     end;
     /**
-     * Represents the event being a drop in event, where you can come and go as you please.
-     * This is determined by the event being longer than 6 hours.
-     * This effects how the event is displayed.
+     * Represents the event being an all day event. Affects the categorization and display of the event.
      */
     allDay = false;
+    /**
+     * Represents the event being a drop in event, where you can come and go as you please.
+     * This is determined by the event being longer than 6 hours.
+     * This affects the categorization of the event.
+     */
+    dropIn = false;
     /**
      * Represents the event being a repeating event, where it happens on a regular basis.
      * Ideally daily things.
@@ -78,12 +82,13 @@ export class EventDuration {
         // I am assuming that everything is in the same day. this will not come back to bite me
         if (start == undefined) {
             this.allDay = true;
+            this.dropIn = true;
         }
         else {
             this.start = start;
             this.end = end;
             // for our purposes, anything over 6 hours is probably "drop in"
-            this.allDay = (end != undefined && end.diff(start, "hours") >= 6);
+            this.dropIn = (end != undefined && end.diff(start, "hours") >= 6);
         }
     }
     toString() {
