@@ -1,8 +1,9 @@
 import * as cheerio from "cheerio";
 import moment from "moment";
-import { ScheduledEvent, EventDuration, EventCategory, TypedEventGroup } from "@/UWEvent";
+import { ScheduledEvent, EventDuration } from "@/UWEvent";
+import { groupEvents } from "@/UWEvent";
 
-export const getEvents = async (date: String, includeEnded: Boolean = false) => {
+export const getEvents = async (date: String, includeEnded: Boolean = true) => {
   let events: ScheduledEvent[] = [];
   const res = await fetch("http://today.wisc.edu/events/day/" + date);
   const $ = cheerio.load(await res.text());
@@ -46,28 +47,9 @@ export const getEvents = async (date: String, includeEnded: Boolean = false) => 
  * @param date date in YYYY-MM-DD format
  * @param includeEnded whether to include events that have already ended (false)
  */
-export const getEventsGrouped = async (date: String, includeEnded: Boolean = false) => {
+export const getEventsGrouped = async (date: String, includeEnded: Boolean = true) => {
   let events = await getEvents(date, includeEnded);
-  // split by event.type
-  let byCategory = events.reduce((accumulator, event) => {
-    const key = event.type;
-    // if there's no group with this key, create one
-    let group = accumulator.find(group => group.type == key);
-    if (!group) {
-      group = {
-        type: key,
-        events: []
-      };
-      accumulator.push(group);
-    }
-    group.events.push(event);
-    return accumulator;
-  }, [] as TypedEventGroup[]);
-
-  const categoryOrder = Object.values(EventCategory)
-  const sortedByCategory = byCategory.sort((a, b) => categoryOrder.indexOf(a.type) - categoryOrder.indexOf(b.type))
-
-  return sortedByCategory
+  return groupEvents(events);
 }
 
 export const GET = async (request: Request, { params }: { params: { date: string } }) => {
@@ -76,5 +58,5 @@ export const GET = async (request: Request, { params }: { params: { date: string
   if (!dateRegex.test(params.date)) {
     return Response.redirect("/api/events");
   }
-  return Response.json(await getEventsGrouped(params.date));
+  return Response.json(await getEvents(params.date));
 }

@@ -1,5 +1,4 @@
-import { Moment } from "moment";
-import { type } from "os";
+import moment from "moment";
 
 export enum EventCategory {
     AllDay = "All Day",
@@ -57,6 +56,23 @@ export class ScheduledEvent {
         str += `\n\t${this.location}`;
         return str;
     }
+    toObject() {
+        const {...obj} = this;
+        let time = {
+            start: this.time.start?.toISOString(),
+            end: this.time.end?.toISOString(),
+        }
+        // @ts-ignore
+        obj.time = time;
+        return obj;
+    }
+    
+    static fromObject(obj: any) {
+        let start = obj.time.start ? moment(obj.time.start) : undefined;
+        let end = obj.time.end ? moment(obj.time.end) : undefined;
+        const event = new ScheduledEvent(obj.title, obj.subtitle, new EventDuration(start, end), obj.location);
+        return event;
+    }
 }
 export class EventDuration {
     start;
@@ -77,7 +93,7 @@ export class EventDuration {
      */
     repeating = false;
 
-    constructor(start: Moment | undefined, end: Moment | undefined) {
+    constructor(start: moment.Moment | undefined, end: moment.Moment | undefined) {
         // potentially valid times: All day, 9am, 9am-4pm, 1-4pm
         // I am assuming that everything is in the same day. this will not come back to bite me
         if (start == undefined) {
@@ -106,6 +122,35 @@ export class EventDuration {
         }
     }
 }
+
+export const groupEvents = (events: ScheduledEvent[]) => {
+  // split by event.type
+  let byCategory = events.reduce((accumulator, event) => {
+    const key = event.type;
+    // if there's no group with this key, create one
+    let group = accumulator.find(group => group.type == key);
+    if (!group) {
+      group = {
+        type: key,
+        events: []
+      };
+      accumulator.push(group);
+    }
+    group.events.push(event);
+    return accumulator;
+  }, [] as TypedEventGroup[]);
+
+  const categoryOrder = Object.values(EventCategory);
+  const sortedByCategory = byCategory.sort((a, b) => categoryOrder.indexOf(a.type) - categoryOrder.indexOf(b.type));
+
+  return sortedByCategory;
+};
+export const dateFormatted = (date: Date) => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 /*
 structure of the html
