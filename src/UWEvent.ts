@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 
 export enum EventCategory {
     AllDay = "All Day",
@@ -68,8 +68,8 @@ export class ScheduledEvent {
     }
     
     static fromObject(obj: any) {
-        let start = obj.time.start ? moment(obj.time.start) : undefined;
-        let end = obj.time.end ? moment(obj.time.end) : undefined;
+        let start = obj.time.start ? dayjs(obj.time.start) : undefined;
+        let end = obj.time.end ? dayjs(obj.time.end) : undefined;
         const event = new ScheduledEvent(obj.title, obj.subtitle, new EventDuration(start, end), obj.location);
         return event;
     }
@@ -93,7 +93,7 @@ export class EventDuration {
      */
     repeating = false;
 
-    constructor(start: moment.Moment | undefined, end: moment.Moment | undefined) {
+    constructor(start: dayjs.Dayjs | undefined, end: dayjs.Dayjs | undefined) {
         // potentially valid times: All day, 9am, 9am-4pm, 1-4pm
         // I am assuming that everything is in the same day. this will not come back to bite me
         if (start == undefined) {

@@ -6,18 +6,21 @@ import { ScheduledEvent, TypedEventGroup, dateFormatted } from "../UWEvent";
 import InfiniteScroll from "react-infinite-scroller";
 import { CategoryHeader, DateHeader } from "./CategoryHeader";
 import { EventPreview } from "./EventPreview";
-import moment from "moment";
+import dayjs from "dayjs";
 import { groupEvents, EventDuration } from "@/UWEvent";
+import "dayjs/plugin/utc";
+import "dayjs/plugin/timezone";
 
 export default function InfiniteScrollEventList({
     initialEvents,
-    initialDate,
 }: {
     initialEvents: any; // has to be any because we can't pass classes to client components, so we need to rehydrate the types first
-    initialDate: Date;
 }) {
+    dayjs.extend(require("dayjs/plugin/utc"));
+    dayjs.extend(require("dayjs/plugin/timezone"));
+    const today = dayjs().tz("America/Chicago", true);
     const fetching = React.useRef(false);
-    const [date, setDate] = React.useState(moment(initialDate));
+    const [date, setDate] = React.useState(today);
     // split initial events by groups
     const initialEventsGrouped = groupEvents(initialEvents.map((obj: any) => ScheduledEvent.fromObject(obj)));
     const [calendar, setCalendar] = React.useState([{
@@ -54,7 +57,7 @@ export default function InfiniteScrollEventList({
         >
             {calendar.map((day, index) => (
                 <div key={day.date.toString()}>
-                    <DateHeader date={day.date.toDate()} />
+                    <DateHeader date={day.date} />
                     {day.groups.map((group, index) => (
                         <div key={group.type}>
                             <CategoryHeader>{group.type}</CategoryHeader>

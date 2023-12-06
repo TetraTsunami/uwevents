@@ -1,4 +1,4 @@
-import moment from "moment";
+import dayjs from "dayjs";
 export const CategoryHeader = ({ children }: {children: any}) => (
     <h3 className="bg-gradient-to-t from-transparent to-neutral-950 py-2 text-xl font-semibold">
       {children}
@@ -6,8 +6,8 @@ export const CategoryHeader = ({ children }: {children: any}) => (
 );
 
 
-export const DateHeader = ({ date }: { date: Date; }) => {
-  const formattedDate = moment(date).format("dddd, MMMM Do YYYY");
+export const DateHeader = ({ date }: { date: dayjs.Dayjs }) => {
+  const formattedDate = date.format("dddd, MMMM Do YYYY");
   return (
     <>
       <h3 className="bg-gradient-to-t from-transparent to-neutral-950 py-2 text-2xl font-semibold sticky top-0">

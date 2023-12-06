@@ -1,5 +1,5 @@
 import * as cheerio from "cheerio";
-import moment from "moment";
+import dayjs from "dayjs";
 import { ScheduledEvent, EventDuration, groupEvents } from "@/UWEvent";
 
 export const getEvents = async (date: String, includeEnded: Boolean = true) => {
@@ -20,16 +20,16 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
       if (timeParts.length == 1) {
         timeParts[1] = timeParts[0];
       }
-      const end = moment(timeParts[1], ["h:mma", "ha"]);
+      const end = dayjs(timeParts[1], ["h:mma", "ha"]);
       // deal with cases like 1-4pm, 1:15-4:30pm
       if (!timeParts[0].endsWith("m")) {
         timeParts[0] += timeParts[1].substring(timeParts[1].length - 2);
       }
       // don't include events that have already ended 
-      if (!includeEnded && end.isBefore(moment())) {
+      if (!includeEnded && end.isBefore(dayjs())) {
         return;
       }
-      const start = moment(timeParts[0], ["h:mma", "ha"]);
+      const start = dayjs(timeParts[0], ["h:mma", "ha"]);
       duration = new EventDuration(start, end);
     }
     const subtitle = $(el).find('p.subtitle').text().replace(/[\n\.]/g, "");
