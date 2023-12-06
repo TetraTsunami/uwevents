@@ -1,9 +1,5 @@
-import { EventPreview } from "./EventPreview";
-import { CategoryHeader, DateHeader } from "./CategoryHeader";
-import { getEvents, getEventsGrouped } from "./api/events/[date]/route";
-import { EventCategory, ScheduledEvent } from "@/UWEvent";
+import { getEvents } from "./api/events/[date]/getEvents";
 import InfiniteScrollEventList from "./InfiniteScrollEventList";
-import { time } from "console";
 import { dateFormatted } from "@/UWEvent";
 
 export default async function Home() {

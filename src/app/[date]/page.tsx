@@ -1,6 +1,6 @@
 import { EventPreview } from "@/app/EventPreview";
 import { CategoryHeader, DateHeader } from "@/app/CategoryHeader";
-import { getEventsGrouped } from "@/app/api/events/[date]/route";
+import { getEventsGrouped } from "../api/events/[date]/getEvents";
 
 export default async function SpecificDate({ params }: { params: { date: string } }) {
   // verify that the date is valid
@@ -26,7 +26,7 @@ export default async function SpecificDate({ params }: { params: { date: string 
         <DateHeader date={date} />
         {eventsGrouped.map((group, index) => (
           <div key={index}>
-            <CategoryHeader sticky={false}>{group.type}</CategoryHeader>
+            <CategoryHeader>{group.type}</CategoryHeader>
             {group.events.map((event, index) => (
               <EventPreview key={index} event={event} />
             ))}

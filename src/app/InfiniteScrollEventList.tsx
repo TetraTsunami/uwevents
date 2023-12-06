@@ -57,7 +57,7 @@ export default function InfiniteScrollEventList({
                     <DateHeader date={day.date.toDate()} />
                     {day.groups.map((group, index) => (
                         <div key={group.type}>
-                            <CategoryHeader sticky={false}>{group.type}</CategoryHeader>
+                            <CategoryHeader>{group.type}</CategoryHeader>
                             {group.events.map((event, index) => (
                                 <EventPreview key={index} event={event} />
                             ))}
