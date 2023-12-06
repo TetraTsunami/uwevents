@@ -20,7 +20,7 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
       if (timeParts.length == 1) {
         timeParts[1] = timeParts[0];
       }
-      const end = dayjs(timeParts[1], ["h:mma", "ha"]);
+      const end = dayjs(timeParts[1].replace(".", ""), ["h:mma", "ha"]);
       // deal with cases like 1-4pm, 1:15-4:30pm
       if (!timeParts[0].endsWith("m")) {
         timeParts[0] += timeParts[1].substring(timeParts[1].length - 2);
@@ -29,7 +29,7 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
       if (!includeEnded && end.isBefore(dayjs())) {
         return;
       }
-      const start = dayjs(timeParts[0], ["h:mma", "ha"]);
+      const start = dayjs(timeParts[0].replace(".", ""), ["h:mma", "ha"]);
       duration = new EventDuration(start, end);
     }
     const subtitle = $(el).find('p.subtitle').text().replace(/[\n\.]/g, "");
