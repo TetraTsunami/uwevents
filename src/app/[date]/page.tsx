@@ -1,14 +1,20 @@
 import { EventPreview } from "@/app/EventPreview";
 import { CategoryHeader, DateHeader } from "@/app/CategoryHeader";
 import { getEventsGrouped } from "../api/events/[date]/getEvents";
+import dayjs from "dayjs";
+import "dayjs/plugin/utc";
+import "dayjs/plugin/timezone";
+import "dayjs/plugin/customParseFormat";
+import { notFound } from "next/navigation";
 
 export default async function SpecificDate({ params }: { params: { date: string } }) {
-  // verify that the date is valid
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
-  if (!dateRegex.test(params.date)) {
-    return Response.redirect("/404");
+  dayjs.extend(require("dayjs/plugin/utc"));
+  dayjs.extend(require("dayjs/plugin/timezone"));
+  dayjs.extend(require("dayjs/plugin/customParseFormat"));
+  const date = dayjs(params.date, "YYYY-MM-DD", true).tz("America/Chicago", true);
+  if (!date.isValid()) {
+    notFound();
   }
-  const date = new Date(params.date.replace("-", "/"));
   const eventsGrouped = await getEventsGrouped(date.toISOString().slice(0, 10), true);
   
   return (

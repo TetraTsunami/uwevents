@@ -7,7 +7,7 @@ export const CategoryHeader = ({ children }: {children: any}) => (
 
 
 export const DateHeader = ({ date }: { date: dayjs.Dayjs }) => {
-  const formattedDate = date.format("dddd, MMMM Do YYYY");
+  const formattedDate = date.format("dddd, MMMM D YYYY");
   return (
     <>
       <h3 className="bg-gradient-to-t from-transparent to-neutral-950 py-2 text-2xl font-semibold sticky top-0">
