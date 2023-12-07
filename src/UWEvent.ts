@@ -19,15 +19,19 @@ export type TypedEventGroup = {
 }
   
 export class ScheduledEvent {
+    id;
     title;
     subtitle;
+    description;
     time;
     location;
     type;
 
-    constructor(title: string, subtitle: string, time: EventDuration, location: string) {
+    constructor(id: string, title: string, subtitle: string, description: string, time: EventDuration, location: string) {
+        this.id = id;
         this.title = title;
         this.subtitle = subtitle;
+        this.description = description;
         this.time = time;
         this.location = location;
         // hueristic to determine the type of event
@@ -66,11 +70,11 @@ export class ScheduledEvent {
         obj.time = time;
         return obj;
     }
-    
     static fromObject(obj: any) {
-        let start = obj.time.start ? dayjs(obj.time.start) : undefined;
-        let end = obj.time.end ? dayjs(obj.time.end) : undefined;
-        const event = new ScheduledEvent(obj.title, obj.subtitle, new EventDuration(start, end), obj.location);
+        let start = obj.time.start ? dayjs(obj.time.start).tz("America/Chicago") : undefined;
+        let end = obj.time.end ? dayjs(obj.time.end).tz("America/Chicago") : undefined;
+        console.log(obj.title, start?.toString(), end?.toString());
+        const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end), obj.location);
         return event;
     }
 }
