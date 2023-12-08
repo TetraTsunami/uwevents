@@ -73,7 +73,6 @@ export class ScheduledEvent {
     static fromObject(obj: any) {
         let start = obj.time.start ? dayjs(obj.time.start).tz("America/Chicago") : undefined;
         let end = obj.time.end ? dayjs(obj.time.end).tz("America/Chicago") : undefined;
-        console.log(obj.title, start?.toString(), end?.toString());
         const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end), obj.location);
         return event;
     }

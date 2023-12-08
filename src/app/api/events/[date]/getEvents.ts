@@ -7,8 +7,14 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
   const res = await fetch("http://today.wisc.edu/events/day/" + date);
   const $ = cheerio.load(await res.text());
   let today = $('h1.day-row-header > a').text(); // "Today, November 19, 2023"
-  $('div.events-list > ul.day-row > li.event-row').each((i, el) => {
+  for (const el of $('div.events-list > ul.day-row > li.event-row')) {
+    // 
+    // Title
+    // 
     const title = $(el).find('h3.event-title > a').text();
+    // 
+    // Duration
+    // 
     let duration;
     if ($(el).find('p:not([class])').text() == "All day") {
       duration = new EventDuration(undefined, undefined);
@@ -27,20 +33,42 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
       }
       // don't include events that have already ended 
       if (!includeEnded && end.isBefore(dayjs())) {
-        return;
+        continue;
       }
       const start = dayjs(timeParts[0].replace(".", ""), ["h:mma", "ha"]);
       duration = new EventDuration(start, end);
     }
+    // 
+    // Subtitle
+    // 
     const subtitle = $(el).find('p.subtitle').text().replace(/[\n\.]/g, "");
+    // 
+    // Location 
+    // (as html, to preserve links)
+    // TODO: would be nice to have a better way of keeping the link
     let location = $(el).find('p.event-location').children().toString().replace(/<i class="fa.*?\/i>/g, "");
     location = location.split("<br>").filter(s => s != "").join(" - ");
     location = location.replace(/<i.*?>(.*?)<\/i>/, "$1");
-    events.push(new ScheduledEvent(title, subtitle, duration, location));
-  });
+    // 
+    // ID and description 
+    //
+    const id = $(el).attr("id")!;
+    const description = await getEventDescription(id);
+    events.push(new ScheduledEvent(id, title, subtitle, description, duration, location));
+  }
+  if (events.length == 0) {
+    throw new Error("No events found for " + date);
+  }
   return events;
-};export const getEventsGrouped = async (date: String, includeEnded: Boolean = true) => {
+};
+
+const getEventDescription = async (id: String) => {
+  const res = await fetch("http://today.wisc.edu/events/view/" + id);
+  const $ = cheerio.load(await res.text());
+  return $('div.event-description').find("br").replaceWith("\n").end().text().trim();
+};
+
+export const getEventsGrouped = async (date: String, includeEnded: Boolean = true) => {
   let events = await getEvents(date, includeEnded);
   return groupEvents(events);
 };
-
