@@ -10,7 +10,7 @@ export const EventPreview = ({ event }: { event: ScheduledEvent; }) => {
   const { title, subtitle, location, time, description } = event;
 
   return (
-    <div className="grid text-left w-full mx-auto my-2 rounded-md border
+    <div className="grid text-left mx-auto my-2 rounded-md border
         px-5 py-4 transition-all border-gray-300 bg-gray-100 dark:border-neutral-700 dark:bg-neutral-900 group">
       <h3 className="text-xl">{title}</h3>
       {subtitle && <div className="text-white/80 text-sm">{subtitle}</div>}

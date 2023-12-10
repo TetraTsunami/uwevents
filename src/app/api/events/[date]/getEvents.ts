@@ -37,6 +37,7 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
       }
       const start = dayjs(timeParts[0].replace(".", ""), ["h:mma", "ha"]);
       duration = new EventDuration(start, end);
+      
     }
     // 
     // Subtitle
