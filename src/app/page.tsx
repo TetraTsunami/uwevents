@@ -25,8 +25,21 @@ export default async function Home() {
       <div className="col-start-2 col-end-3 mx-auto mb-32 grid max-w-full rounded-lg border border-gray-300 bg-gray-100 px-5 py-4 text-center transition-colors dark:border-neutral-700 dark:bg-neutral-950"
       >
         <h2 className="mb-3 text-2xl font-semibold">
-          Events listing
+          UW-Madison Events listing
         </h2>
+        <p className="mb-3">
+          This is a listing of events happening at UW-Madison. It is
+          not comprehensive, and is not endorsed by UW. You can find the
+          official calendar{" "}
+          <a
+            href="https://today.wisc.edu/"
+            target="_blank"
+            className="underline hover:text-red-200 active:text-red-400"
+          >
+            here
+          </a>
+          .
+        </p>
         <hr />
           <InfiniteScrollEventList initialEvents={initialEvents} />
       </div>

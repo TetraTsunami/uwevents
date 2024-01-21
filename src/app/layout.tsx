@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import '@fortawesome/fontawesome-svg-core/styles.css'
+import aerial from "../../public/aerial_UW_17-35mm11_6873-1.jpg"
+import Image from "next/image";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -17,6 +19,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <Image src={aerial} alt="" className="fixed inset-0 -z-10 h-full w-full object-cover opacity-50" />
       <body className={inter.className}>{children}</body>
     </html>
   )
