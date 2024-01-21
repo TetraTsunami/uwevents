@@ -25,15 +25,17 @@ export class ScheduledEvent {
     description;
     time;
     location;
+    link;
     type;
 
-    constructor(id: string, title: string, subtitle: string, description: string, time: EventDuration, location: string) {
+    constructor(id: string, title: string, subtitle: string, description: string, time: EventDuration, location: string, link: string) {
         this.id = id;
         this.title = title;
         this.subtitle = subtitle;
         this.description = description;
         this.time = time;
         this.location = location;
+        this.link = link;
         // hueristic to determine the type of event
         if (time.dropIn) {
             this.type = EventCategory.AllDay;
@@ -73,7 +75,7 @@ export class ScheduledEvent {
     static fromObject(obj: any) {
         let start = obj.time.start ? dayjs(obj.time.start).tz("America/Chicago") : undefined;
         let end = obj.time.end ? dayjs(obj.time.end).tz("America/Chicago") : undefined;
-        const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end), obj.location);
+        const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end), obj.location, obj.link);
         return event;
     }
 }

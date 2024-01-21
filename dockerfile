@@ -36,5 +36,6 @@ USER nodejs
 
 EXPOSE 3000
 ENV PORT 3000
+ENV TZ "America/Chicago"
 
 CMD ["node", "server.js"]

@@ -51,11 +51,19 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
     location = location.split("<br>").filter(s => s != "").join(" - ");
     location = location.replace(/<i.*?>(.*?)<\/i>/, "$1");
     // 
+    // Link to event page
+    // 
+    let link = $(el).find('h3.event-title > a').attr("href")!;
+    // add domain to relative links
+    if (link.startsWith("/")) {
+      link = "https://today.wisc.edu" + link;
+    }
+    // 
     // ID and description 
     //
     const id = $(el).attr("id")!;
     const description = await getEventDescription(id);
-    events.push(new ScheduledEvent(id, title, subtitle, description, duration, location));
+    events.push(new ScheduledEvent(id, title, subtitle, description, duration, location, link));
   }
   if (events.length == 0) {
     throw new Error("No events found for " + date);
