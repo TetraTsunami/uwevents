@@ -7,11 +7,11 @@ export const EventPreview = ({ event }: { event: ScheduledEvent; }) => {
   const { title, subtitle, location, time, description, link } = event;
 
   return (
-    <div className="group mx-auto my-2 grid rounded-md border border-gray-300 bg-gray-100 px-5 py-4 text-left transition-all dark:border-neutral-700 dark:bg-neutral-900">
-      <h3 className="break-all font-semibold md:text-xl">
-        <a href={link} target="_blank" className="underline hover:text-red-200 active:text-red-400" >{title}</a></h3>
+    <div className="group mx-auto my-2 flex flex-col gap-1 rounded-md border border-gray-300 bg-gray-100 p-2 text-left transition-all dark:border-neutral-700 dark:bg-neutral-900 sm:px-5 sm:py-4">
+      <h3 className="break-all sm:font-semibold md:text-xl">
+        <a href={link} target="_blank" className="hover:text-red-200 active:text-red-400 sm:underline" >{title}</a></h3>
       {subtitle && <div className="text-sm text-white/80">{subtitle}</div>}
-      <div className="flex flex-wrap gap-x-3">
+      <div className="flex flex-wrap gap-x-3 text-xs sm:text-base">
         {time && <div><FontAwesomeIcon fixedWidth={true} icon={faClock} className="mr-2" />{time.toString()}</div>}
         {location && <div><FontAwesomeIcon fixedWidth={true} icon={faLocationDot} className="mr-2" /><span className={styles.inner}dangerouslySetInnerHTML={{__html: location}}></span></div>}
         {description.replace("\s", "") && <div><FontAwesomeIcon fixedWidth={true} icon={faAlignLeft} className="mr-2" /></div>}

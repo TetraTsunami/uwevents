@@ -21,8 +21,8 @@ export default async function Home() {
   const initialEvents = await getInitialEvents();
 
   return (
-    <main className="grid min-h-screen py-24" style={{gridTemplateColumns: "1fr min(65ch, calc(100% - 64px)) 1fr"}}>
-      <div className="col-start-2 col-end-3 mx-auto mb-32 grid max-w-full rounded-lg border border-gray-300 bg-gray-100 px-5 py-4 text-center transition-colors dark:border-neutral-700 dark:bg-neutral-950"
+    <main className="min-h-screen p-2 sm:px-16 sm:py-24">
+      <div className="col-start-2 col-end-3 mx-auto mb-32 grid max-w-3xl rounded-lg border border-gray-300 bg-gray-100 p-2 text-center transition-colors dark:border-neutral-700 dark:bg-neutral-950 sm:px-5 sm:py-4"
       >
         <h2 className="mb-3 text-2xl font-semibold">
           UW-Madison Events listing
