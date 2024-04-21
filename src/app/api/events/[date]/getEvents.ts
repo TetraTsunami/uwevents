@@ -17,7 +17,7 @@ export const getEvents = async (date: string, includeEnded: boolean = true) => {
     // 
     let duration;
     if ($(el).find('p:not([class])').text() == "All day") {
-      duration = new EventDuration(undefined, undefined);
+      duration = new EventDuration(dayjs(date, "YYYY-MM-DD"), dayjs(date, "YYYY-MM-DD").endOf("day"), true);
     }
     else {
       const time = $(el).find('p.event-time').text().replace(/[\s\.]/g, "");
@@ -26,7 +26,7 @@ export const getEvents = async (date: string, includeEnded: boolean = true) => {
       if (timeParts.length == 1) {
         timeParts[1] = timeParts[0];
       }
-      const end = dayjs(timeParts[1].replace(".", ""), ["h:mma", "ha"]);
+      const end = dayjs(date + " " + timeParts[1].replace(".", ""), ["YYYY-MM-DD h:mma", "YYYY-MM-DD ha"]);
       // deal with cases like 1-4pm, 1:15-4:30pm
       if (!timeParts[0].endsWith("m")) {
         timeParts[0] += timeParts[1].substring(timeParts[1].length - 2);
@@ -35,7 +35,7 @@ export const getEvents = async (date: string, includeEnded: boolean = true) => {
       if (!includeEnded && end.isBefore(dayjs())) {
         continue;
       }
-      const start = dayjs(timeParts[0].replace(".", ""), ["h:mma", "ha"]);
+      const start = dayjs(date + " " + timeParts[0].replace(".", ""), ["YYYY-MM-DD h:mma", "YYYY-MM-DD ha"]);
       duration = new EventDuration(start, end);
       
     }
@@ -46,10 +46,10 @@ export const getEvents = async (date: string, includeEnded: boolean = true) => {
     // 
     // Location 
     // (as html, to preserve links)
-    // TODO: would be nice to have a better way of keeping the link
-    let location = $(el).find('p.event-location').children().toString().replace(/<i class="fa.*?\/i>/g, "");
-    location = location.split("<br>").filter(s => s != "").join(" - ");
-    location = location.replace(/<i.*?>(.*?)<\/i>/, "$1");
+    let location = $(el).find('p.event-location > a').map((_, el) => ({
+      name: $(el).text(),
+      link: $(el).attr("href") as string
+    })).get();
     // 
     // Link to event page
     // 
@@ -63,7 +63,7 @@ export const getEvents = async (date: string, includeEnded: boolean = true) => {
     //
     const id = $(el).attr("id")!;
     const description = await getEventDescription(id);
-    events.push(new ScheduledEvent(id, title, subtitle, description, duration, location, link, date));
+    events.push(new ScheduledEvent(id, title, subtitle, description, duration, location, link));
   }
   if (events.length == 0) {
     throw new Error("No events found for " + date);

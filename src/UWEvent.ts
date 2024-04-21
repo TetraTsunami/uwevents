@@ -25,20 +25,17 @@ export class ScheduledEvent {
     subtitle;
     description;
     time;
-    location;
+    locations;
     link;
     type;
-    date;
-
-    constructor(id: string, title: string, subtitle: string, description: string, time: EventDuration, location: string, link: string, date: string) {
+    constructor(id: string, title: string, subtitle: string, description: string, time: EventDuration, locations: (UWLocation[] | undefined) , link: string) {
         this.id = id;
         this.title = title;
         this.subtitle = subtitle;
         this.description = description;
         this.time = time;
-        this.location = location;
+        this.locations = locations || [];
         this.link = link;
-        this.date = date;
         // hueristic to determine the type of event
         if (time.dropIn) {
             this.type = EventCategory.AllDay;
@@ -52,12 +49,21 @@ export class ScheduledEvent {
             this.type = EventCategory.DropIn;
         } else if (matchesAny([title, subtitle], [/Meeting/i, /Meetup/i, /Breakfast/i, /Lunch/i, /Dinner/i])) {
             this.type = EventCategory.Meeting;
-        } else if (matchesAny([title, subtitle, location], [/Stadium/i, /Field House/i, /Randall/i, /Gym/i, /Court/i, /UW vs\./i, /Wisconsin vs\./i, 
+        } else if (matchesAny([title, subtitle, this.locations[0]?.name ?? ""], [/Stadium/i, /Field House/i, /Randall/i, /Gym/i, /Court/i, /UW vs\./i, /Wisconsin vs\./i, 
                 /Football/i, /Softball/i, /Tennis/i, /Hockey/i, /Soccer/i, /Volleyball/i, /Basketball/i, /Wrestling/i])) {
             this.type = EventCategory.Sports;
         } else {
             this.type = EventCategory.Other;
         }
+    }
+    googleCalendarLink() {
+        let start = (!this.time.allDay ? this.time.start.toISOString() : this.time.start.format("YYYY-MM-DD")).replace(/-|:|\.\d+/g, '');
+        let end = (!this.time.allDay ? this.time.end.toISOString() : this.time.end.format("YYYY-MM-DD")).replace(/-|:|\.\d+/g, '');
+        let title = encodeURIComponent(this.title)
+        let description = encodeURIComponent(this.description);
+        let location = encodeURIComponent(this.locations[0]?.name);
+        let url = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}/${end}&details=${description}&location=${location}`;
+        return url;
     }
     toString() {
         let str = `${this.title}`;
@@ -65,7 +71,7 @@ export class ScheduledEvent {
             str += `\n\t${this.subtitle}`;
         }
         str += `\n\t${this.time.toString()}`;
-        str += `\n\t${this.location}`;
+        str += `\n\t${this.locations[0]?.name}`;
         return str;
     }
     toObject() {
@@ -73,17 +79,25 @@ export class ScheduledEvent {
         let time = {
             start: this.time.start?.toISOString(),
             end: this.time.end?.toISOString(),
+            allDay: this.time.allDay,
         }
         // @ts-ignore
         obj.time = time;
         return obj;
     }
-    static fromObject(obj: any) {
-        let start = obj.time.start ? dayjs(obj.time.start).tz("America/Chicago") : undefined;
-        let end = obj.time.end ? dayjs(obj.time.end).tz("America/Chicago") : undefined;
-        const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end), obj.location, obj.link, obj.date);
+    static fromObject(obj: any) {   
+        let start = dayjs(obj.time.start).tz("America/Chicago");
+        let end = dayjs(obj.time.end).tz("America/Chicago");
+        const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end , obj.time.allDay), 
+            obj.locations, obj.link);
         return event;
     }
+}
+
+export interface UWLocation {
+    name: string;
+    link: string;
+
 }
 export class EventDuration {
     start;
@@ -104,19 +118,14 @@ export class EventDuration {
      */
     repeating = false;
 
-    constructor(start: dayjs.Dayjs | undefined, end: dayjs.Dayjs | undefined) {
+    constructor(start: dayjs.Dayjs, end: dayjs.Dayjs, allDay = false) {
         // potentially valid times: All day, 9am, 9am-4pm, 1-4pm
         // I am assuming that everything is in the same day. this will not come back to bite me
-        if (start == undefined) {
-            this.allDay = true;
-            this.dropIn = true;
-        }
-        else {
-            this.start = start;
-            this.end = end;
-            // for our purposes, anything over 6 hours is probably "drop in"
-            this.dropIn = (end != undefined && end.diff(start, "hours") >= 6);
-        }
+        this.allDay = allDay;
+        this.start = start;
+        this.end = end;
+        // for our purposes, anything over 6 hours is probably "drop in"
+        this.dropIn = (end != undefined && end.diff(start, "hours") >= 6);
     }
     toString() {
         if (this.allDay) {
