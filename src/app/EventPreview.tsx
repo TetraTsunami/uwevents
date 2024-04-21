@@ -49,7 +49,7 @@ export const EventPreview = ({ event }: { event: ScheduledEvent }) => {
                             className="mr-1"
                         />
                         {locations.map((location, index) => (
-                            <a key={index} href={location.link} className="underline">
+                            <a key={index} href={location.link} className="mr-2 underline">
                                 {location.name}
                             </a>
                         ))}
