@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 
 export enum EventCategory {
     AllDay = "All Day",
+    Sports = "Sports",
     ClubMeeting = "Club",
     Lecture = "Lecture",
     DropIn = "Drop-in",
@@ -27,8 +28,9 @@ export class ScheduledEvent {
     location;
     link;
     type;
+    date;
 
-    constructor(id: string, title: string, subtitle: string, description: string, time: EventDuration, location: string, link: string) {
+    constructor(id: string, title: string, subtitle: string, description: string, time: EventDuration, location: string, link: string, date: string) {
         this.id = id;
         this.title = title;
         this.subtitle = subtitle;
@@ -36,12 +38,13 @@ export class ScheduledEvent {
         this.time = time;
         this.location = location;
         this.link = link;
+        this.date = date;
         // hueristic to determine the type of event
         if (time.dropIn) {
             this.type = EventCategory.AllDay;
         } else if (matchesAny([title, subtitle], [/Let's Talk/i, /Table/i])) {
             this.type = EventCategory.LetsTalk;
-        } else if (matchesAny([title, subtitle], [/Meeting/i, /WUD/i, /Club/i, /Committee/i])) {
+        } else if (matchesAny([title, subtitle, description], [/Meeting/i, /WUD/i, /Club/i, /Committee/i])) {
            this.type = EventCategory.ClubMeeting;
         } else if (matchesAny([title, subtitle], [/Lecture/i, /Speaker/i, /Talk/i, /Seminar/i])) {
             this.type = EventCategory.Lecture;
@@ -49,6 +52,9 @@ export class ScheduledEvent {
             this.type = EventCategory.DropIn;
         } else if (matchesAny([title, subtitle], [/Meeting/i, /Meetup/i, /Breakfast/i, /Lunch/i, /Dinner/i])) {
             this.type = EventCategory.Meeting;
+        } else if (matchesAny([title, subtitle, location], [/Stadium/i, /Field House/i, /Randall/i, /Gym/i, /Court/i, /UW vs\./i, /Wisconsin vs\./i, 
+                /Football/i, /Softball/i, /Tennis/i, /Hockey/i, /Soccer/i, /Volleyball/i, /Basketball/i, /Wrestling/i])) {
+            this.type = EventCategory.Sports;
         } else {
             this.type = EventCategory.Other;
         }
@@ -75,7 +81,7 @@ export class ScheduledEvent {
     static fromObject(obj: any) {
         let start = obj.time.start ? dayjs(obj.time.start).tz("America/Chicago") : undefined;
         let end = obj.time.end ? dayjs(obj.time.end).tz("America/Chicago") : undefined;
-        const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end), obj.location, obj.link);
+        const event = new ScheduledEvent(obj.id, obj.title, obj.subtitle, obj.description, new EventDuration(start, end), obj.location, obj.link, obj.date);
         return event;
     }
 }

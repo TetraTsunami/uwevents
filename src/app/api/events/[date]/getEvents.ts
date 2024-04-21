@@ -1,8 +1,8 @@
 import * as cheerio from "cheerio";
 import dayjs from "dayjs";
-import { ScheduledEvent, EventDuration, groupEvents } from "@/UWEvent";
+import { ScheduledEvent, EventDuration as EventDuration, groupEvents } from "@/UWEvent";
 
-export const getEvents = async (date: String, includeEnded: Boolean = true) => {
+export const getEvents = async (date: string, includeEnded: boolean = true) => {
   let events: ScheduledEvent[] = [];
   const res = await fetch("http://today.wisc.edu/events/day/" + date);
   const $ = cheerio.load(await res.text());
@@ -63,7 +63,7 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
     //
     const id = $(el).attr("id")!;
     const description = await getEventDescription(id);
-    events.push(new ScheduledEvent(id, title, subtitle, description, duration, location, link));
+    events.push(new ScheduledEvent(id, title, subtitle, description, duration, location, link, date));
   }
   if (events.length == 0) {
     throw new Error("No events found for " + date);
@@ -71,13 +71,13 @@ export const getEvents = async (date: String, includeEnded: Boolean = true) => {
   return events;
 };
 
-const getEventDescription = async (id: String) => {
+const getEventDescription = async (id: string) => {
   const res = await fetch("http://today.wisc.edu/events/view/" + id);
   const $ = cheerio.load(await res.text());
   return $('div.event-description').find("br").replaceWith("\n").end().text().trim();
 };
 
-export const getEventsGrouped = async (date: String, includeEnded: Boolean = true) => {
+export const getEventsGrouped = async (date: string, includeEnded: boolean = true) => {
   let events = await getEvents(date, includeEnded);
   return groupEvents(events);
 };
