@@ -4,13 +4,11 @@ Alternate frontend for [today.wisc.edu](https://today.wisc.edu). Inspired by [wh
 - Scraping using Cheddar
 - Frontend using Next.js and Tailwind CSS
 - Categorization of events
-### Plans:
 - Infinite scroll on homepage
+### Plans:
 - Incorporate events posted elsewhere (TITU, club Instagram pages?)
-- More subtitles on events like wheretogo.tech has
-- Better theming (app name, styles)
 
-![image](https://github.com/TetraTsunami/uwevents/assets/78718829/6760eedf-14b4-454e-88a7-30d43cb29ed2)
+![image](https://github.com/TetraTsunami/uwevents/assets/78718829/6760eedf-14b4-454e-88a7-30d43cb29ed2)](https://github.com/TetraTsunami/uwevents)
 
 
 
