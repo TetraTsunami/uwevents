@@ -1,4 +1,4 @@
-Alternate frontend for [today.wisc.edu](https://today.wisc.edu). Inspired by [wheretogo.tech](https://wheretogo.tech/)
+Alternate frontend for [today.wisc.edu](https://today.wisc.edu), inspired by [wheretogo.tech](https://wheretogo.tech/). Find it online at [uwevents.tsuni.dev](https://uwevents.tsuni.dev)!
 
 ### Features:
 - Scraping using Cheddar
@@ -8,7 +8,7 @@ Alternate frontend for [today.wisc.edu](https://today.wisc.edu). Inspired by [wh
 ### Plans:
 - Incorporate events posted elsewhere (TITU, club Instagram pages?)
 
-![image](https://github.com/TetraTsunami/uwevents/assets/78718829/6760eedf-14b4-454e-88a7-30d43cb29ed2)](https://github.com/TetraTsunami/uwevents)
+![image](https://github.com/TetraTsunami/uwevents/assets/78718829/950156eb-e136-4529-95d8-cce15a0aa724)
 
 
 
