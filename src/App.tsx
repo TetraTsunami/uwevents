@@ -1,15 +1,10 @@
-import { useState, useEffect } from 'preact/hooks';
+import { FormEvent, useState } from 'react';
 import ICAL from 'ical.js';
 import { CalendarEvent } from './types';
 import EventList from './components/EventList';
 import { CalendarDays, Loader2 } from 'lucide-react';
-
-const PRESET_CALENDARS = [
-  {
-    label: 'UW-Madison Events',
-    url: 'https://today.wisc.edu/events.ics'
-  },
-];
+import AutoComplete from './components/Combobox';
+import PRESET_CALENDARS from './calendars'
 
 const WORKER_URL = 'https://cal-proxy.akamitsunami.workers.dev'; // You'll need to update this
 
@@ -49,60 +44,37 @@ function App() {
 
       parsedEvents.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
       setEvents(parsedEvents);
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to load calendar events. Please try again later.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUrlSubmit = (e: Event) => {
+  const handleUrlSubmit = (e: FormEvent) => {
     e.preventDefault();
     fetchCalendar(calendarUrl);
   };
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="max-w-4xl mx-auto px-4 py-8">
+      <div className="mx-auto max-w-4xl px-4 py-8">
         <header className="mb-8">
-          <div className="flex items-center mb-6">
-            <CalendarDays className="w-8 h-8 text-blue-600 mr-3" />
+          <div className="mb-6 flex items-center">
+            <CalendarDays className="mr-3 h-8 w-8 text-blue-600" />
             <h1 className="text-3xl font-bold text-gray-900">Calendar Events</h1>
           </div>
           
           <form onSubmit={handleUrlSubmit} className="space-y-4">
-            <div className="relative">
-              <input
-                type="url"
-                value={calendarUrl}
-                onChange={(e) => setCalendarUrl((e.target as HTMLInputElement).value)}
-                placeholder="Enter calendar URL..."
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-              <div className="absolute inset-x-0 top-full mt-2 bg-white rounded-lg shadow-lg border border-gray-200 divide-y divide-gray-100">
-                {PRESET_CALENDARS.map((cal) => (
-                  <button
-                    key={cal.url}
-                    type="button"
-                    onClick={() => {
-                      setCalendarUrl(cal.url);
-                      fetchCalendar(cal.url);
-                    }}
-                    className="w-full px-4 py-2 text-left hover:bg-gray-50 transition-colors"
-                  >
-                    {cal.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <AutoComplete type='url' placeholder='Enter calendar URL' data={PRESET_CALENDARS} input={[calendarUrl, setCalendarUrl]} />
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {loading ? (
                 <span className="flex items-center">
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Loading...
                 </span>
               ) : (
@@ -113,11 +85,11 @@ function App() {
         </header>
 
         {error ? (
-          <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+          <div className="rounded border-l-4 border-red-500 bg-red-50 p-4">
             <p className="text-red-700">{error}</p>
           </div>
         ) : events.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-md p-6 text-center">
+          <div className="rounded-lg bg-white p-6 text-center shadow-md">
             <p className="text-gray-600">
               {loading ? 'Loading calendar events...' : 'No events found. Please select or enter a calendar URL.'}
             </p>
