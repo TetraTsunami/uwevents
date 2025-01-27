@@ -4,7 +4,7 @@ import { CalendarEvent } from './types';
 import EventList from './components/EventList';
 import { CalendarDays, Loader2 } from 'lucide-react';
 import AutoComplete from './components/Combobox';
-import PRESET_CALENDARS from './calendars'
+import PRESET_CALENDARS from './utils'
 
 const WORKER_URL = 'https://cal-proxy.akamitsunami.workers.dev'; // You'll need to update this
 
@@ -58,14 +58,14 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        <header className="mb-8">
+      <div className="mx-auto max-w-4xl p-2 sm:px-4 sm:py-8">
+        <header className="mb-4">
           <div className="mb-6 flex items-center">
             <CalendarDays className="mr-3 h-8 w-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">Calendar Events</h1>
+            <h1 className="text-3xl font-bold text-gray-900">iCal Viewer</h1>
           </div>
           
-          <form onSubmit={handleUrlSubmit} className="space-y-4">
+          <form onSubmit={handleUrlSubmit} className="flex flex-wrap gap-2">
             <AutoComplete type='url' placeholder='Enter calendar URL' data={PRESET_CALENDARS} input={[calendarUrl, setCalendarUrl]} />
             <button
               type="submit"
@@ -74,7 +74,7 @@ function App() {
             >
               {loading ? (
                 <span className="flex items-center">
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="h-4 w-4 animate-spin" />
                   Loading...
                 </span>
               ) : (
